@@ -21,6 +21,7 @@ static const char unknown_str[] = "n/a";
  * disk_perc            disk usage in percent           mountpoint path (/)
  * disk_total           total disk space in GB          mountpoint path (/)
  * disk_used            used disk space in GB           mountpoint path (/)
+ * echo                 string to echo                  NULL
  * entropy              available entropy               NULL
  * gid                  GID of current user             NULL
  * hostname             hostname                        NULL
@@ -39,7 +40,6 @@ static const char unknown_str[] = "n/a";
  * ram_total            total memory size in GB         NULL
  * ram_used             used memory in GB               NULL
  * run_command          custom shell command            command (echo foo)
- * separator            string to echo                  NULL
  * swap_free            free swap in GB                 NULL
  * swap_perc            swap usage in percent           NULL
  * swap_total           total swap size in GB           NULL
@@ -55,7 +55,7 @@ static const char unknown_str[] = "n/a";
  * wifi_essid           WiFi ESSID                      interface name (wlan0)
  */
 
-static const arg sep = { separator, "%s", " | " };
+static const char *separator = " | ";
 static const arg args[] = {
     { datetime, "%s", "%F %T" },
 };

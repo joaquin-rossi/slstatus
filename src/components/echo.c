@@ -4,7 +4,7 @@
 #include "../util.h"
 
 const char *
-separator(const char *separator)
+echo(const char *string)
 {
-    return separator;
+    return string;
 }

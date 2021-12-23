@@ -1,10 +1,10 @@
-/* See LICENSE file for copyright and license details. */
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #include <X11/Xlib.h>
 
 #include "arg.h"
@@ -96,10 +96,8 @@ main(int argc, char **argv)
 
             len += ret;
 
-            if (i + 1 != LEN(args)) {
-                res = sep.func(sep.args);
-                ret = esnprintf(status + len, sizeof(status) - len, sep.fmt, res);
-
+            if (i != LEN(args) - 1) {
+                ret = esnprintf(status + len, sizeof(status) - len, "%s", separator);
                 len += ret;
             }
         }

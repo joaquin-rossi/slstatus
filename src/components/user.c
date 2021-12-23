@@ -9,24 +9,24 @@
 const char *
 gid(void)
 {
-	return bprintf("%d", getgid());
+    return bprintf("%d", getgid());
 }
 
 const char *
 username(void)
 {
-	struct passwd *pw;
+    struct passwd *pw;
 
-	if (!(pw = getpwuid(geteuid()))) {
-		warn("getpwuid '%d':", geteuid());
-		return NULL;
-	}
+    if (!(pw = getpwuid(geteuid()))) {
+        warn("getpwuid '%d':", geteuid());
+        return NULL;
+    }
 
-	return bprintf("%s", pw->pw_name);
+    return bprintf("%s", pw->pw_name);
 }
 
 const char *
 uid(void)
 {
-	return bprintf("%d", geteuid());
+    return bprintf("%d", geteuid());
 }

@@ -7,6 +7,7 @@ COM =\
 	src/components/cpu\
 	src/components/datetime\
 	src/components/disk\
+	src/components/echo\
 	src/components/entropy\
 	src/components/hostname\
 	src/components/ip\
@@ -18,7 +19,6 @@ COM =\
 	src/components/num_files\
 	src/components/ram\
 	src/components/run_command\
-	src/components/separator\
 	src/components/swap\
 	src/components/temperature\
 	src/components/uptime\

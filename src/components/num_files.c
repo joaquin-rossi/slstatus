@@ -8,24 +8,24 @@
 const char *
 num_files(const char *path)
 {
-	struct dirent *dp;
-	DIR *fd;
-	int num;
+    struct dirent *dp;
+    DIR *fd;
+    int num;
 
-	if (!(fd = opendir(path))) {
-		warn("opendir '%s':", path);
-		return NULL;
-	}
+    if (!(fd = opendir(path))) {
+        warn("opendir '%s':", path);
+        return NULL;
+    }
 
-	num = 0;
-	while ((dp = readdir(fd))) {
-		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..")) {
-			continue; /* skip self and parent */
-		}
-		num++;
-	}
+    num = 0;
+    while ((dp = readdir(fd))) {
+        if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..")) {
+            continue; /* skip self and parent */
+        }
+        num++;
+    }
 
-	closedir(fd);
+    closedir(fd);
 
-	return bprintf("%d", num);
+    return bprintf("%d", num);
 }
