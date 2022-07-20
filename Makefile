@@ -11,10 +11,10 @@ COM =\
 	src/components/entropy\
 	src/components/hostname\
 	src/components/ip\
-	src/components/kernel_release\
-	src/components/keyboard_indicators\
-	src/components/keymap\
+	src/components/kernel\
+	src/components/keyboard\
 	src/components/load_avg\
+	src/components/motd\
 	src/components/netspeeds\
 	src/components/num_files\
 	src/components/ram\
@@ -24,12 +24,12 @@ COM =\
 	src/components/uptime\
 	src/components/user\
 	src/components/volume\
-	src/components/wifi
+	src/components/wifi\
 
 all: slstatus
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CCFLAGS) $^ -o $@ -c
 
 slstatus: $(OBJ) $(COM:=.o)
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -39,8 +39,7 @@ clean:
 
 install: all
 	mkdir -p "$(DESTDIR)$(PREFIX)/bin"
-	cp -f slstatus "$(DESTDIR)$(PREFIX)/bin"
-	chmod 755 "$(DESTDIR)$(PREFIX)/bin/slstatus"
+	install -Dm755 slstatus "$(DESTDIR)$(PREFIX)/bin/slstatus"
 
 uninstall:
 	rm -f "$(DESTDIR)$(PREFIX)/bin/slstatus"
