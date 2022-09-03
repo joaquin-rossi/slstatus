@@ -1,47 +1,57 @@
-include config.mk
-SRC=$(wildcard src/*.c)
-OBJ=$(patsubst %.c, %.o, $(SRC))
+CPPFLAGS = -D_DEFAULT_SOURCE -I/usr/X11R6/include
+CFLAGS  = ${CPPFLAGS} -pedantic -Wall -Wextra -O2
+LDLIBS  = -lX11
+LDFLAGS = -L/usr/X11R6/lib
 
-COM =\
-	src/components/battery\
-	src/components/cpu\
-	src/components/datetime\
-	src/components/disk\
-	src/components/echo\
-	src/components/entropy\
-	src/components/hostname\
-	src/components/ip\
-	src/components/kernel\
-	src/components/keyboard\
-	src/components/load_avg\
-	src/components/motd\
-	src/components/netspeeds\
-	src/components/num_files\
-	src/components/ram\
-	src/components/run_command\
-	src/components/swap\
-	src/components/temperature\
-	src/components/uptime\
-	src/components/user\
-	src/components/volume\
-	src/components/wifi\
+PREFIX = /usr/local
 
-all: slstatus
 
-%.o: %.c
-	$(CC) $(CCFLAGS) $^ -o $@ -c
+.PHONY: all clean install uninstall pre-build
 
-slstatus: $(OBJ) $(COM:=.o)
-	$(CC) $(LDFLAGS) $^ -o $@
+all: build
+
+build: pre-build slstatus
 
 clean:
-	rm -f slstatus $(COM:=.o) $(REQ:=.o) $(OBJ)
+	rm -rf build slstatus
 
-install: all
-	mkdir -p "$(DESTDIR)$(PREFIX)/bin"
-	install -Dm755 slstatus "$(DESTDIR)$(PREFIX)/bin/slstatus"
+install: build
+	install -Dm755 slstatus "${PREFIX}/bin/slstatus"
 
 uninstall:
-	rm -f "$(DESTDIR)$(PREFIX)/bin/slstatus"
+	rm -f "${PREFIX}/bin/slstatus"
 
-.PHONY: all clean install uninstall
+pre-build:
+	@mkdir -p build
+	@mkdir -p build/components
+
+
+build/%.o: src/%.c
+	${CC} ${CFLAGS} $^ -o $@ -c
+
+slstatus: \
+		build/slstatus.o \
+		build/util.o \
+		build/components/battery.o \
+		build/components/cpu.o \
+		build/components/datetime.o \
+		build/components/disk.o \
+		build/components/echo.o \
+		build/components/entropy.o \
+		build/components/hostname.o \
+		build/components/ip.o \
+		build/components/kernel.o \
+		build/components/keyboard.o \
+		build/components/load_avg.o \
+		build/components/motd.o \
+		build/components/netspeeds.o \
+		build/components/num_files.o \
+		build/components/ram.o \
+		build/components/run_command.o \
+		build/components/swap.o \
+		build/components/temperature.o \
+		build/components/uptime.o \
+		build/components/user.o \
+		build/components/volume.o \
+		build/components/wifi.o
+	${CC} ${LDFLAGS} ${LDLIBS} $^ -o $@

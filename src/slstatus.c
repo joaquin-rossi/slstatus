@@ -27,9 +27,10 @@ char status[STATUSLEN+1];
 static Display *dpy;
 static volatile sig_atomic_t done;
 
-static struct timespec timespec_from_milli(unsigned int milli);
+static void action_run(unsigned ai);
 static void handle_action(const int signo);
 static void handle_terminate(const int signo);
+static struct timespec timespec_from_milli(unsigned int milli);
 static void timespec_sub(struct timespec *res, struct timespec *a, struct timespec *b);
 static void usage(void);
 
@@ -69,16 +70,16 @@ main(int argc, char **argv)
 	}
 
 	for (size_t ai = 0; ai < LEN(actions); ai++) {
-		action_t a = actions[ai];
+		const action_t *a = &actions[ai];
 
-		strcpy(cache[ai].res, a.func(a.arg));
+		action_run(ai);
 		if (clock_gettime(CLOCK_MONOTONIC, &cache[ai].last_time) < 0)
 			die("clock_gettime:");
 
-		if (a.signo != 0) {
+		if (a->signo != 0) {
 			struct sigaction act = {0};
 			act.sa_handler = handle_action;
-			sigaction(SIGRTMIN + a.signo, &act, NULL);
+			sigaction(SIGRTMIN + a->signo, &act, NULL);
 		}
 	}
 
@@ -106,15 +107,15 @@ main(int argc, char **argv)
 					if (ai >= LEN(actions))
 						die("Invalid format string");
 
-					action_t a = actions[ai];
-					if (a.interval > 0) {
-						struct timespec intspec = timespec_from_milli(a.interval);
+					const action_t *a = &actions[ai];
+					if (a->interval > 0) {
+						struct timespec intspec = timespec_from_milli(a->interval);
 						timespec_sub(&diff, &start, &cache[ai].last_time);
 						timespec_sub(&diff, &diff, &intspec);
 
 						if (diff.tv_sec >= 0 && diff.tv_nsec >= 0) {
 							cache[ai].last_time = start;
-							strcpy(cache[ai].res, a.func(a.arg));
+							action_run(ai);
 						}
 					}
 
@@ -176,13 +177,23 @@ main(int argc, char **argv)
 }
 
 void
+action_run(unsigned ai)
+{
+	const action_t *a = &actions[ai];
+
+	const char *r = a->func(a->arg);
+	if (r != NULL) strcpy(cache[ai].res, r);
+	else strcpy(cache[ai].res, unknown_str);
+}
+
+void
 handle_action(const int signo)
 {
 	for (size_t ai = 0; ai < LEN(actions); ai++) {
-		action_t a = actions[ai];
-		if (SIGRTMIN + a.signo != signo) continue;
+		const action_t *a = &actions[ai];
+		if (SIGRTMIN + a->signo != signo) continue;
 
-		strcpy(cache[ai].res, a.func(a.arg));
+		action_run(ai);
 		if (clock_gettime(CLOCK_MONOTONIC, &cache[ai].last_time) < 0)
 			die("clock_gettime:");
 

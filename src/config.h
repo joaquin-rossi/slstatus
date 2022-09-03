@@ -73,10 +73,9 @@ static const char unknown_str[] = "n/a";
  * motd                 contents of /etc/motd          NULL
  */
 
-static const char fmt[] = "%$ | ipv4: %$ | volume: %$%% | %$";
+static const char fmt[] = "ipv4: %$ | volume: %$ | %$";
 static const action_t actions[] = {
-	{ .interval = 1000, .signo = 0, .func = keyboard_indicators, .arg = "cn" },
-	{ .interval = 1000, .signo = 0, .func = ipv4,                .arg = "enp5s0" },
-	{ .interval = 0,    .signo = 1, .func = run_command,         .arg = "pamixer --get-volume" },
-	{ .interval = 1000, .signo = 0, .func = datetime,            .arg = "%F %T" },
+	{ .interval = 100, .signo = 0, .func = ipv4,                .arg = "enp5s0" },
+	{ .interval = 100, .signo = 1, .func = run_command,         .arg = "pamixer --get-volume-human" },
+	{ .interval = 100, .signo = 0, .func = datetime,            .arg = "%F %T" },
 };
