@@ -1,5 +1,5 @@
 CPPFLAGS = -D_DEFAULT_SOURCE -I/usr/X11R6/include
-CFLAGS  = ${CPPFLAGS} -pedantic -Wall -Wextra -O2
+CFLAGS  = $(CPPFLAGS) -std=c99 -Os -pedantic -Wall -Wextra
 LDLIBS  = -lX11
 LDFLAGS = -L/usr/X11R6/lib
 
@@ -13,13 +13,13 @@ all: build
 build: pre-build slstatus
 
 clean:
-	rm -rf build slstatus
+	$(RM) -r build slstatus
 
 install: build
-	install -Dm755 slstatus "${PREFIX}/bin/slstatus"
+	install -Dm755 slstatus "$(PREFIX)/bin/slstatus"
 
 uninstall:
-	rm -f "${PREFIX}/bin/slstatus"
+	$(RM) -r "$(PREFIX)/bin/slstatus"
 
 pre-build:
 	@mkdir -p build
@@ -27,7 +27,7 @@ pre-build:
 
 
 build/%.o: src/%.c
-	${CC} ${CFLAGS} $^ -o $@ -c
+	$(CC) $(CFLAGS) $^ -o $@ -c
 
 slstatus: \
 		build/slstatus.o \
@@ -54,4 +54,4 @@ slstatus: \
 		build/components/user.o \
 		build/components/volume.o \
 		build/components/wifi.o
-	${CC} ${LDFLAGS} ${LDLIBS} $^ -o $@
+	$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
